@@ -76,7 +76,7 @@ class AuthenticationsHandler {
         return response
       }
 
-      // Server ERROR!
+      // Server error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.'
