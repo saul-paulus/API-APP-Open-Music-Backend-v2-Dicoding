@@ -1,7 +1,8 @@
 require('dotenv').config()
+const Hapi = require('@hapi/hapi')
+const Jwt = require('@hapi/jwt')
 
 // music
-const Hapi = require('@hapi/hapi')
 const musics = require('./api/musics')
 const MusicsService = require('./services/postgres/MusicService')
 const MusicValidator = require('./validator/music')
@@ -12,9 +13,10 @@ const UserService = require('./services/postgres/UserService')
 const UserValidator = require('./validator/users')
 
 // authentication
+
 const authentications = require('./api/authentications')
 const AuthenticationsService = require('./services/postgres/AuthenticationsService')
-const TokenManager = require('./tokenize/TokenManager')
+const TokenManager = require('./tokenize/tokenManager')
 const AuthenticationsValidator = require('./validator/authentications')
 
 const init = async () => {
@@ -30,6 +32,29 @@ const init = async () => {
         origin: ['*']
       }
     }
+  })
+
+  await server.register([
+    {
+      plugin: Jwt
+    }
+  ])
+
+  // mendefinisikan strategy autentikasi jwt
+  server.auth.strategy('notesapp_jwt', 'jwt', {
+    keys: process.env.ACCESS_TOKEN_KEY,
+    verify: {
+      aud: false,
+      iss: false,
+      sub: false,
+      maxAgeSec: process.env.ACCESS_TOKEN_AGE
+    },
+    validate: (artifacts) => ({
+      isValid: true,
+      credentials: {
+        id: artifacts.decoded.payload.id
+      }
+    })
   })
 
   await server.register([
