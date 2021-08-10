@@ -53,6 +53,7 @@ class MusicHandler {
     const { id: credentialId } = request.auth.credentials
 
     const music = await this._service.getMusics(credentialId)
+
     const song = music.map(m => ({
       id: m.id,
       title: m.title,
@@ -71,7 +72,7 @@ class MusicHandler {
       const { songId } = request.params
       const { id: credentialId } = request.auth.credentials
 
-      await this._service.verifyNoteOwner(songId, credentialId)
+      await this._service.verifyMusicOwner(songId, credentialId)
       const song = await this._service.getMusicById(songId)
 
       return {
@@ -105,12 +106,13 @@ class MusicHandler {
   async putMusicByIdHandler (request, h) {
     try {
       this._validator.validateMusicPayload(request.payload)
-      const { title, year, performer, genre, duration } = request.payload
       const { songId } = request.params
+
       const { id: credentialId } = request.auth.credentials
 
       await this._service.verifyMusicOwner(songId, credentialId)
-      await this._service.editMusicById(songId, { title, year, performer, genre, duration })
+
+      await this._service.editMusicById(songId, request.payload)
 
       return {
         status: 'success',
@@ -141,7 +143,8 @@ class MusicHandler {
       const { songId } = request.params
       const { id: credentialId } = request.auth.credentials
 
-      await this._service.verifyNoteOwner(songId, credentialId)
+      await this._service.verifyMusicOwner(songId, credentialId)
+
       await this._service.deleteMusicById(songId)
 
       return {

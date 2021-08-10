@@ -16,7 +16,7 @@ class MusicsService {
     const updatedAt = insertedAt
 
     const query = {
-      text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id',
+      text: 'INSERT INTO songs VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id',
       values: [id, title, year, performer, genre, duration, insertedAt, updatedAt, owner]
     }
     const result = await this._pool.query(query)
@@ -89,7 +89,7 @@ class MusicsService {
     const result = await this._pool.query(query)
 
     if (!result.rows.length) {
-      throw new NotFoundError('Catatan tidak ditemukan')
+      throw new NotFoundError('Lagu tidak ditemukan')
     }
 
     const song = result.rows[0]
