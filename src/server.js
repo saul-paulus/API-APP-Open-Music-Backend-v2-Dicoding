@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 require('dotenv').config()
 const Hapi = require('@hapi/hapi')
 const Jwt = require('@hapi/jwt')
@@ -18,10 +19,16 @@ const AuthenticationsService = require('./services/postgres/AuthenticationsServi
 const TokenManager = require('./tokenize/tokenManager')
 const AuthenticationsValidator = require('./validator/authentications')
 
+// playlists
+const playlists = require('./api/playlists')
+const PlaylistValidtor = require('./validator/playlists')
+const PlaylistsService = require('./services/postgres/playlistsService')
+
 const init = async () => {
   const musicsService = new MusicsService()
   const usersService = new UsersService()
   const authenticationsService = new AuthenticationsService()
+  const playlistsService = new PlaylistsService()
 
   const server = Hapi.server({
     port: process.env.PORT,
@@ -78,6 +85,13 @@ const init = async () => {
         usersService,
         tokenManager: TokenManager,
         validator: AuthenticationsValidator
+      }
+    },
+    {
+      plugin: playlists,
+      options: {
+        service: playlistsService,
+        validator: PlaylistValidtor
       }
     }
   ])
