@@ -1,42 +1,15 @@
-/* eslint-disable camelcase */
+/* Documentasi error */
 
-exports.up = pgm => {
-  pgm.createTable('musics', {
-    id: {
-      type: 'VARCHAR(50)',
-      primaryKey: true
-    },
-    title: {
-      type: 'TEXT',
-      notNull: true
-    },
-    year: {
-      type: 'NUMERIC',
-      notNull: true
-    },
-    performer: {
-      type: 'TEXT',
-      notNull: true
-    },
-    genre: {
-      type: 'TEXT',
-      notNull: true
-    },
-    duration: {
-      type: 'NUMERIC',
-      notNull: true
-    },
-    inserted_at: {
-      type: 'TEXT',
-      notNull: true
-    },
-    updated_at: {
-      type: 'TEXT',
-      notNull: true
-    }
-  })
-}
 
-exports.down = pgm => {
-  pgm.dropTable('musics')
-}
+ixspx@ixspx:~/coding/dicoding/back-end/open-musics-psql-backend-v2$ npm run migrate up --no-check-order
+
+> open-musics-app-back-end@1.0.0 migrate
+> node-pg-migrate "up"
+
+Error: Not run migration 1629221510988_create-playlistsongs-table is preceding already run migration 1628706365769_create-playlistsongs
+    at checkOrder (/home/ixspx/coding/dicoding/back-end/open-musics-psql-backend-v2/node_modules/node-pg-migrate/dist/runner.js:103:19)
+    at exports.default (/home/ixspx/coding/dicoding/back-end/open-musics-psql-backend-v2/node_modules/node-pg-migrate/dist/runner.js:149:13)
+    at processTicksAndRejections (node:internal/process/task_queues:96:5)
+
+solusi:
+ixspx@ixspx:~/coding/dicoding/back-end/open-musics-psql-backend-v2$ npm run migrate up -- --no-check-order

@@ -1,24 +1,26 @@
 const { Pool } = require('pg')
 const { nanoid } = require('nanoid')
 const InvariantError = require('../../exceptions/InvariantError')
+const NotFoundError = require('../../exceptions/NotFoundError')
 
 class PlaylistsongsService {
-  constructor () {
+  constructor (playlistsService) {
     this._pool = new Pool()
+    this._playlistsService = playlistsService
   }
 
-  async addPlaylistsong (songId, playlistId) {
+  async addPlaylistsong (playlistId, songId) {
     const id = `playlistsong-${nanoid(16)}`
 
     const query = {
       text: 'INSERT INTO playlistsongs VALUES($1, $2, $3) RETURNING id',
-      values: [id, songId, playlistId]
+      values: [id, playlistId, songId]
     }
 
     const result = await this._pool.query(query)
 
     if (!result.rows.length) {
-      throw new InvariantError('Lagu gagal ditambahkan')
+      throw new InvariantError('Lagu gagal ditambahkan ke playlist')
     }
 
     return result.rows[0].id
@@ -26,7 +28,7 @@ class PlaylistsongsService {
 
   async getPlaylistsongs (playlistId) {
     const query = {
-      text: 'SELECT * FROM playlistsongs WHERE id = $1',
+      text: 'SELECT songs.id, songs.title, songs.performer FROM songs JOIN playlistsongs ON songs.id = playlistsongs.song_id WHERE playlistsongs.playlist_id = $1',
       values: [playlistId]
     }
 
@@ -35,28 +37,26 @@ class PlaylistsongsService {
     return result.rows
   }
 
-  async deletePlaylistsongById (songId) {
+  async deletePlaylistsongById (playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlistsongs WHERE song_id = $1',
-      values: [songId]
+      text: 'DELETE FROM playlistsongs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
+      values: [songId, playlistId]
     }
 
     const result = await this._pool.query(query)
 
     if (!result.rows.length) {
-      throw new InvariantError('Kolaborasi gagal dihapus')
+      throw new InvariantError('Lagu gagal dihapus')
     }
   }
 
-  async verifyPlaylistsong (songId, playlistId) {
-    const query = {
-      text: 'SELECT * FROM collaborations WHERE song_id = $1 AND playlist_id = $2',
-      values: [songId, playlistId]
-    }
-    const result = await this._pool.query(query)
-
-    if (!result.rows.length) {
-      throw new InvariantError('Kolaborasi gagal diverifikasi')
+  async verifyPlaylistsongAccess (playlistId, songId) {
+    try {
+      await this._playlistsService.verifyPlaylistOwner(playlistId, songId)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error
+      }
     }
   }
 }

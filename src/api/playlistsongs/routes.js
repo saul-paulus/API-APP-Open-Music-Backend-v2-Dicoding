@@ -4,23 +4,23 @@ const routes = (handler) => [
     path: '/playlists/{playlistId}/songs',
     handler: handler.postPlaylistsongHandler,
     options: {
-      auth: 'notesapp_jwt'
+      auth: 'musicsapp_jwt'
     }
   },
   {
     method: 'GET',
-    path: ' /playlists/{playlistId}/songs',
-    handler: handler.getPlaylistsongHandler,
+    path: '/playlists/{playlistId}/songs',
+    handler: handler.getPlaylistsongsHandler,
     options: {
-      auth: 'notesapp_jwt'
+      auth: 'musicsapp_jwt'
     }
   },
   {
     method: 'DELETE',
-    path: ' /playlists/{playlistId}/songs',
+    path: '/playlists/{playlistId}/songs',
     handler: handler.deletePlaylistsongByIdHandler,
     options: {
-      auth: 'notesapp_jwt'
+      auth: 'musicsapp_jwt'
     }
   }
 ]
