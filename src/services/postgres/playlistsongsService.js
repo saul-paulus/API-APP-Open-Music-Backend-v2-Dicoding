@@ -13,7 +13,7 @@ class PlaylistsongsService {
     const id = `playlistsong-${nanoid(16)}`
 
     const query = {
-      text: 'INSERT INTO playlistsongs VALUES($1, $2, $3) RETURNING id',
+      text: 'INSERT INTO playlistsongs VALUES($1, $2, $3)',
       values: [id, playlistId, songId]
     }
 

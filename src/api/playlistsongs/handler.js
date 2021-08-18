@@ -12,11 +12,11 @@ class PlaylistsongsHandler {
 
   async postPlaylistsongHandler (request, h) {
     try {
+      this._validator.validatePlaylistsongPayload(request.payload)
+
       const { id: credentialId } = request.auth.credentials
       const { songId } = request.payload
       const { playlistId } = request.params
-
-      this._validator.validatePlaylistsongPayload(request.payload)
 
       await this._service.verifyPlaylistsongAccess(playlistId, credentialId)
       await this._service.addPlaylistsong({ playlistId, songId })
@@ -86,7 +86,7 @@ class PlaylistsongsHandler {
         return response
       }
 
-      // Server ERROR!
+      // server error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.'
