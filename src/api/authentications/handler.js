@@ -45,7 +45,6 @@ class AuthenticationsHandler {
         return response
       }
 
-      // Server error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.'
@@ -62,7 +61,7 @@ class AuthenticationsHandler {
 
       const { refreshToken } = request.payload
       await this._authenticationsService.verifyRefreshToken(refreshToken)
-      const { id } = this._tokenManager.verifyRefreshToken(refreshToken)
+      const { id } = await this._tokenManager.verifyRefreshToken(refreshToken)
 
       const accessToken = this._tokenManager.generateAccessToken({ id })
       return {
@@ -82,7 +81,6 @@ class AuthenticationsHandler {
         return response
       }
 
-      // Server error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.'
