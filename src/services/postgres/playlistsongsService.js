@@ -4,9 +4,8 @@ const InvariantError = require('../../exceptions/InvariantError')
 const NotFoundError = require('../../exceptions/NotFoundError')
 
 class PlaylistsongsService {
-  constructor (playlistsService) {
+  constructor () {
     this._pool = new Pool()
-    this._playlistsService = playlistsService
   }
 
   async addPlaylistsong (playlistId, songId) {
@@ -28,7 +27,7 @@ class PlaylistsongsService {
 
   async getPlaylistsongs (playlistId) {
     const query = {
-      text: 'SELECT songs.id, songs.title, songs.performer FROM songs JOIN playlistsongs ON songs.id = playlistsongs.song_id WHERE playlistsongs.playlist_id = $1',
+      text: 'SELECT songs.id, songs.title, songs.performer FROM playlistsongs LEFT JOIN songs ON songs.id = playlistsongs.song_id WHERE playlistsongs.playlist_id = $1',
       values: [playlistId]
     }
 
@@ -39,24 +38,14 @@ class PlaylistsongsService {
 
   async deletePlaylistsongById (playlistId, songId) {
     const query = {
-      text: 'DELETE FROM playlistsongs WHERE song_id = $1 AND playlist_id = $2 RETURNING id',
+      text: 'DELETE FROM playlistsongs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
       values: [songId, playlistId]
     }
 
     const result = await this._pool.query(query)
 
     if (!result.rows.length) {
-      throw new InvariantError('Lagu gagal dihapus')
-    }
-  }
-
-  async verifyPlaylistsongAccess (playlistId, songId) {
-    try {
-      await this._playlistsService.verifyPlaylistOwner(playlistId, songId)
-    } catch (error) {
-      if (error instanceof NotFoundError) {
-        throw error
-      }
+      throw new InvariantError('Lagu gagal dihapus dari playlist, Id tidak ditemukan')
     }
   }
 }

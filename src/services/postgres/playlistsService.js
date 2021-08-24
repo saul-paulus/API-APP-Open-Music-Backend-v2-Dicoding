@@ -10,6 +10,7 @@ class PlaylistsService {
   }
 
   async addPlaylist ({ name, owner }) {
+    await this.verifyNamePlaylist(name)
     const id = `playlist-${nanoid(16)}`
 
     const query = {
@@ -28,7 +29,7 @@ class PlaylistsService {
 
   async getPlaylists (owner) {
     const query = {
-      text: 'SELECT * FROM playlists WHERE owner= $1',
+      text: 'SELECT playlists.id, playlists.name, users.username FROM playlists LEFT JOIN users ON users.id = playlists.owner WHERE playlists.owner= $1',
       values: [owner]
     }
 
@@ -49,10 +50,23 @@ class PlaylistsService {
     }
   }
 
-  async verifyPlaylistOwner (id, owner) {
+  async verifyNamePlaylist (name) {
+    const query = {
+      text: 'SELECT name FROM playlists WHERE name = $1',
+      values: [name]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (result.rows.length > 0) {
+      throw new InvariantError('Gagal menambah playlist, name sudah digunakan')
+    }
+  }
+
+  async verifyPlaylistOwner (playlistId, owner) {
     const query = {
       text: 'SELECT * FROM playlists WHERE id = $1',
-      values: [id]
+      values: [playlistId]
     }
 
     const result = await this._pool.query(query)
@@ -65,6 +79,16 @@ class PlaylistsService {
 
     if (playlist.owner !== owner) {
       throw new AuthorizationError('Anda tidak dapat berhak mengakses resource ini')
+    }
+  }
+
+  async verifyPlaylistsongAccess (playlistId, songId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, songId)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error
+      }
     }
   }
 }
