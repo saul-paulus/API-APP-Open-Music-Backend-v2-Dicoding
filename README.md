@@ -7,6 +7,8 @@ untuk menjalankan aplikasi, database postgresql sudah  harus terinstal di PC, se
 2. npm run migrate up
 3. npm run start-dev
 
+jika server sudah jalan, maka dapat dicoba pada postman
+
 ---------------------------------------------------------------------------------------------------------------
 Kriteria 1 : Terdapat fitur registrasi pengguna (Menambahkan user)
 API yang Anda buat harus dapat menambahkan user melalui route:
