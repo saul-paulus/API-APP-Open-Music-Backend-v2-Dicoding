@@ -28,6 +28,7 @@ class AuthenticationsService {
   }
 
   async deleteRefreshToken (token) {
+    // Memeriksa token ada di database atau tidak
     await this.verifyRefreshToken(token)
 
     const query = {
