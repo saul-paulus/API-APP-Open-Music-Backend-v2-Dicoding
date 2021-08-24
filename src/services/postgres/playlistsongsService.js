@@ -48,6 +48,29 @@ class PlaylistsongsService {
       throw new InvariantError('Lagu gagal dihapus dari playlist, Id tidak ditemukan')
     }
   }
+
+  async verifySongOnPlaylistsong (songId) {
+    const query = {
+      text: 'SELECT * FROM playlistsongs WHERE songId = $1',
+      values: [songId]
+    }
+
+    const result = await this._pool.query(query)
+
+    if (result.rows.length) {
+      throw new InvariantError('Lagu gagal ditambahkan, songId sudah terdaftar')
+    }
+  }
+
+  async verifyPlaylistsongAccess (playlistId, songId) {
+    try {
+      await this.verifyPlaylistOwner(playlistId, songId)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error
+      }
+    }
+  }
 }
 
 module.exports = PlaylistsongsService
