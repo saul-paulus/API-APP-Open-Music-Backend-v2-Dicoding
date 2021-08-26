@@ -6,8 +6,26 @@ const NotFoundError = require('../../exceptions/NotFoundError')
 const AuthorizationError = require('../../exceptions/AuthorizationError')
 
 class MusicsService {
-  constructor () {
+  constructor (collaborationsService) {
     this._pool = new Pool()
+    this._collaborationsService = collaborationsService
+  }
+
+  // mengverifikasi hak akses pengguna (userId) terhadap song(songId)
+  async verifyMusicAccess (songId, userId) {
+    try {
+      await this.verifyMusicOwner(songId, userId)
+    } catch (error) {
+      if (error instanceof NotFoundError) {
+        throw error
+      }
+
+      try {
+        await this._collaborationsService.verifyCollaborator(songId, userId)
+      } catch {
+        throw error
+      }
+    }
   }
 
   async addMusic ({ title, year, performer, genre, duration, owner }) {
