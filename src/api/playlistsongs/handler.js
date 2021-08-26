@@ -87,7 +87,6 @@ class PlaylistsongsHandler {
         return response
       }
 
-      // server error
       const response = h.response({
         status: 'error',
         message: 'Maaf, terjadi kegagalan pada server kami.'

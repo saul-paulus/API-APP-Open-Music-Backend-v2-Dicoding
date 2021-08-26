@@ -39,25 +39,25 @@ class PlaylistsongsService {
   async deletePlaylistsongById (playlistId, songId) {
     const query = {
       text: 'DELETE FROM playlistsongs WHERE playlist_id = $1 AND song_id = $2 RETURNING id',
-      values: [songId, playlistId]
+      values: [playlistId, songId]
     }
 
     const result = await this._pool.query(query)
 
-    if (!result.rows.length) {
+    if (!result.rowCount) {
       throw new InvariantError('Lagu gagal dihapus dari playlist, Id tidak ditemukan')
     }
   }
 
-  async verifySongOnPlaylistsong (songId) {
+  async verifySongOnPlaylistsong (playlistId, songId) {
     const query = {
-      text: 'SELECT * FROM playlistsongs WHERE songId = $1',
-      values: [songId]
+      text: 'SELECT playlist_id, song_id FROM playlistsongs WHERE playlistsongs.playlist_id = $1 AND playlistsongs.song_id = $2',
+      values: [playlistId, songId]
     }
 
     const result = await this._pool.query(query)
 
-    if (result.rows.length) {
+    if (!result.rowCount) {
       throw new InvariantError('Lagu gagal ditambahkan, songId sudah terdaftar')
     }
   }
