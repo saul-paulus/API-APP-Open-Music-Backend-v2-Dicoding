@@ -13,3 +13,4 @@ Error: Not run migration 1629221510988_create-playlistsongs-table is preceding a
 
 solusi:
 ixspx@ixspx:~/coding/dicoding/back-end/open-musics-psql-backend-v2$ npm run migrate up -- --no-check-order
+

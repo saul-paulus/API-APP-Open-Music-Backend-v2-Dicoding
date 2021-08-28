@@ -49,15 +49,15 @@ class PlaylistsongsService {
     }
   }
 
-  async verifySongOnPlaylistsong (playlistId, songId) {
+  async verifySongOnPlaylistsong (songId) {
     const query = {
-      text: 'SELECT playlist_id, song_id FROM playlistsongs WHERE playlistsongs.playlist_id = $1 AND playlistsongs.song_id = $2',
-      values: [playlistId, songId]
+      text: 'SELECT song_id FROM playlistsongs WHERE song_id = $1',
+      values: [songId]
     }
 
     const result = await this._pool.query(query)
 
-    if (!result.rowCount) {
+    if (result.rows.length > 0) {
       throw new InvariantError('Lagu gagal ditambahkan, songId sudah terdaftar')
     }
   }
