@@ -5,7 +5,7 @@ API Open Music
 Aplikasi ini dibangun dengan menggunakan nodejs framework hapi dan meggunakan database PSQL
 
 untuk menjalankan aplikasi, database postgresql sudah  harus terinstal di PC, setelah 
-(source code telah diDownload);
+(source code telah diclone);
 1. npm run install
 2. npm run migrate up
 3. npm run start-dev
