@@ -57,11 +57,11 @@ Method : DELETE URL : /playlists/{playlistId}
 4. Data Menghapus playlis lagu
 
 ## Installation
-- App di Clone
-- npm run install
-- npm run migrate up
-- npm run start-dev
-- jika server sudah jalan, maka dapat dicoba pada postman
+- `App di Clone`
+- `npm run install`
+- `npm run migrate up`
+- `npm run start-dev`
+- `jika server sudah jalan, maka dapat dicoba pada postman`
 
 ## License
 
